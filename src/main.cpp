@@ -1,12 +1,13 @@
 #include <Arduino.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
-#include <Arduino_JSON.h>
+// #include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 
-// const char* ssid = "vivo V21 5G";
-// const char* password = "gurabestwaifu";
-const char* ssid = "Some mobile phone around you";
-const char* password = "20200202";
+const char* ssid = "vivo V21 5G";
+const char* password = "gurabestwaifu";
+// const char* ssid = "Some mobile phone around you";
+// const char* password = "20200202";
 
 String baseURL = "https://data.etabus.gov.hk";
 
@@ -52,9 +53,27 @@ void loop() {
       if (httpResponseCode>0) {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
-        String payload = http.getString();
+        const char *payload = http.getString().c_str();
         Serial.println(payload);
-        JSONVar myObject = JSON.parse(payload);
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, payload);
+        const char* test = doc["type"];
+        Serial.println(test);
+
+        // char json[] = "{\"sensor\":\"gps\",\"time\":1351824120,\"data\":[48.756080,2.302038]}";
+
+        // DynamicJsonDocument doc(1024);
+        // deserializeJson(doc, json);
+
+        // const char* sensor = doc["sensor"];
+        // long time          = doc["time"];
+        // double latitude    = doc["data"][0];
+        // double longitude   = doc["data"][1];
+
+        // Serial.println(time);
+
+        /*JSONVar myObject = JSON.parse(payload);
 
         if (JSON.typeof(myObject) == "undefined") {
           Serial.println("Parsing input failed!");
@@ -63,7 +82,7 @@ void loop() {
 
         JSONVar testData = myObject["data"];
         JSONVar ori = testData["orig_en"];
-        Serial.println(ori);
+        Serial.println(ori);*/
       }
       else {
         Serial.print("Error code: ");
